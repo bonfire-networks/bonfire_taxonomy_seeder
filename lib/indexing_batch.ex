@@ -1,5 +1,4 @@
 defmodule Bonfire.TaxonomySeeder.IndexingBatch do
-  use ActivityPubWeb, :controller
 
   import Bonfire.Common.Config, only: [repo: 0]
 

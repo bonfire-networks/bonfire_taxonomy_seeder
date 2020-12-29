@@ -6,11 +6,12 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
   # alias Ecto.ULID
   alias CommonsPub.Repo
 
-  @extension_path "lib/"
+  @extension_path "lib"
   @table "taxonomy_tag"
 
   def try_dotsql_execute(filename, mode) do
     path = "/opt/app/" <> filename
+    # Path.join(__DIR__, filename)
 
     case File.stat(path) do
       {:ok, _} ->
