@@ -3,7 +3,7 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
 
   require Logger
 
-  # alias Ecto.ULID
+  # alias Pointers.ULID
   alias CommonsPub.Repo
 
   @extension_path "lib"
