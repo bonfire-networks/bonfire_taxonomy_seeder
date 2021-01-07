@@ -30,7 +30,7 @@ defmodule Bonfire.TaxonomySeeder.ConnCase do
       alias Bonfire.TaxonomySeeder.Web.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint Bonfire.TaxonomySeeder.Web.Endpoint
+      @endpoint Bonfire.Common.Config.get!(:endpoint_module)
     end
   end
 

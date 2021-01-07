@@ -24,7 +24,7 @@ defmodule Bonfire.TaxonomySeeder.ChannelCase do
       import Bonfire.TaxonomySeeder.ChannelCase
 
       # The default endpoint for testing
-      @endpoint Bonfire.TaxonomySeeder.Web.Endpoint
+      @endpoint Bonfire.Common.Config.get!(:endpoint_module)
     end
   end
 
