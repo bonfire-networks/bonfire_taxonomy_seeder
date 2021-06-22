@@ -18,6 +18,8 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTag.Queries do
     from(c in TaxonomyTag, as: :tag)
   end
 
+  def query(filters), do: filter(TaxonomyTag, filters)
+
   def query(q, filters), do: filter(query(q), filters)
 
   def queries(query, base_filters, data_filters, count_filters) do
