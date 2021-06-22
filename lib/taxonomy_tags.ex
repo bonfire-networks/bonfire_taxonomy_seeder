@@ -21,7 +21,7 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
 
   def get(id), do: one(id: id, preload: :parent_tag, preload: :category)
 
-  def many(filters \\ []), do: {:ok, repo().all(Queries.query(TaxonomyTag, filters))}
+  def many(filters \\ []), do: {:ok, repo().many(Queries.query(TaxonomyTag, filters))}
 
   @doc """
   Retrieves an Page of tags according to various filters
