@@ -6,35 +6,52 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
   # alias Pointers.ULID
   alias CommonsPub.Repo
 
-  @extension_path "lib"
+  @app_path File.cwd!
   @table "taxonomy_tag"
 
   def try_dotsql_execute(filename, mode) do
-    path = "/opt/app/" <> filename
-    # Path.join(__DIR__, filename)
+    path = filename
 
     case File.stat(path) do
       {:ok, _} ->
         dotsql_execute(path, mode)
 
       {:error, :enoent} ->
-        Logger.info("SQL file for taxonomy module not found: " <> path)
+        Logger.info("SQL file for taxonomy module not found in current dir: " <> path)
 
-        path = @extension_path <> "/overlay/" <> filename
+        path = "overlay/" <> filename |> Path.expand(__DIR__)
 
         case File.stat(path) do
           {:ok, _} ->
             dotsql_execute(path, mode)
 
           {:error, :enoent} ->
-            Logger.info("SQL file for taxonomy module not found: " <> path)
+            Logger.info("SQL file for taxonomy module not found in extension's /lib/overlay: " <> path)
 
-            path = filename
+            path = "priv/"<> filename |> Path.expand(@app_path)
 
             case File.stat(path) do
-              {:ok, _} -> dotsql_execute(path, mode)
-              {:error, :enoent} -> Logger.warn("SQL file for taxonomy module not found: " <> path)
-            end
+              {:ok, _} ->
+                Logger.info("SQL file for taxonomy module found in extensions's /priv directory: " <> path)
+
+                dotsql_execute(path, mode)
+
+              {:error, :enoent} ->
+
+                Logger.warn("SQL file for taxonomy module not found in extensions's /priv directory: " <> path)
+
+                path = "../../priv/"<> filename |> Path.expand(@app_path)
+
+                case File.stat(path) do
+                  {:ok, _} ->
+
+                    Logger.info("SQL file for taxonomy module found in app's /priv directory: " <> path)
+
+                    dotsql_execute(path, mode)
+
+                  {:error, :enoent} -> Logger.error("SQL file for taxonomy module not found in app's /priv directory: " <> path)
+                end
+              end
         end
     end
   end
@@ -81,7 +98,7 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
   end
 
   def ingest_data(mode) do
-    try_dotsql_execute("data/sql/tags.data.sql", mode)
+    try_dotsql_execute("seed_data/tags.data.sql", mode)
   end
 
   def down do

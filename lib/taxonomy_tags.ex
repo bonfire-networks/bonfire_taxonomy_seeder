@@ -3,8 +3,8 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
   # alias Ecto.Changeset
   require Logger
 
-
   alias Bonfrie.GraphQL.Page
+  alias Bonfire.Common.Text
 
   import Bonfire.Common.Config, only: [repo: 0]
 
@@ -76,8 +76,10 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
     # with Bonfire.Classify.Categories.one(taxonomy_tag_id: tag.id) do
     if !is_nil(tag.category_id) and
          Ecto.assoc_loaded?(tag.category) and
-         !is_nil(tag.category.id) do
-      # already exists
+         !is_nil(tag.category)
+         and !is_nil(tag.category.id) do
+      IO.puts(tag.name <>" already exists: "<>tag.category.id)
+      # Bonfire.Classify.Categories.maybe_index(tag.category)
       {:ok, tag.category}
     else
       make_category(user, tag)
@@ -103,38 +105,42 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
 
     # IO.inspect(pointerise_parent: parent_tag)
 
-    # pointerise the parent(s) first (recursively)
-    with {:ok, parent_category} <- maybe_make_category(user, parent_tag) do
-      # IO.inspect(parent_category: parent_category)
+    repo().transact_with(fn ->
 
-      create_tag =
-        cleanup(tag)
-        |> Map.merge(%{parent_category: parent_category})
-        |> Map.merge(%{parent_category_id: parent_category.id})
-        |> Map.merge(%{
-          preferred_username: shorten(tag.name, 150) <> "-" <> shorten(parent_tag.name, 100)
-        })
+      # pointerise the parent(s) first (recursively)
+      with {:ok, parent_category} <- maybe_make_category(user, parent_tag) do
+        # IO.inspect(parent_category: parent_category)
 
-      # finally pointerise the child(ren), in hierarchical order
-      create_category(user, tag, create_tag)
-    else
-      _e ->
-        Logger.error("could not create parent tag")
-        raise "stopping here to debug"
-        # create the child anyway?
-        # create_category(user, tag, create_tag)
-    end
+        create_tag =
+          cleanup(tag)
+          |> Map.merge(%{
+          parent_category: parent_category,
+          parent_category_id: parent_category.id})
+
+        Logger.warn("Finally pointerise the child(ren), in hierarchical order...")
+
+        create_bonfire_classify_category(user, tag, create_tag)
+
+      else
+        _e ->
+          Logger.error("could not create parent tag")
+          raise "stopping here to debug"
+
+          # create the child anyway?
+          # create_bonfire_classify_category(user, tag, create_tag)
+      end
+    end)
   end
 
   defp make_category(user, %TaxonomyTag{} = tag) do
-    create_category(user, tag, cleanup(tag))
+    create_bonfire_classify_category(user, tag, cleanup(tag))
   end
 
-  defp create_category(user, tag, attrs) do
-    # IO.inspect(create_category: tag)
+  defp create_bonfire_classify_category(user, tag, attrs) do
+    # IO.inspect(create_bonfire_classify_category: tag)
 
     repo().transact_with(fn ->
-      # IO.inspect(create_category: tag)
+      # IO.inspect(create_bonfire_classify_category: tag)
 
       with {:ok, category} <- Bonfire.Classify.Categories.create(user, attrs),
            {:ok, _tag} <- update(user, tag, %{category: category, category_id: category.id}) do
@@ -145,6 +151,8 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
 
   @doc "Transform the generic fields of anything to be turned into a character."
   def cleanup(thing) do
+    name = thing.name |> String.trim("-") |> String.trim("_") |> String.trim(".") |> String.trim(":") |> String.trim()
+
     thing
     # convert to map
     # |> Map.put(:taxonomy_tag, thing)
@@ -152,15 +160,21 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
     |> Map.from_struct()
     |> Map.delete(:__meta__)
     # use Thing name as facet/trope
-    |> Map.put(:facet, "Category")
-    |> Map.put(:name, shorten(thing.name))
+    |> Map.put(:facet, "Topic")
+    |> Map.put(:name, shorten(name))
+    |> Map.put(:username, username(name))
     |> Map.put(:prefix, "+")
     # avoid reusing IDs
     |> Map.delete(:id)
   end
 
-  def shorten(input, length \\ 244) do
-    CommonsPub.Utils.Text.truncate(input, length)
+  def username("The "<>name), do: username(Text.upcase_first(name))
+  def username("the "<>name), do: username(Text.upcase_first(name))
+  def username("A "<>name), do: username(Text.upcase_first(name))
+  def username(name), do: shorten(name, 60) |> Bonfire.Me.Characters.clean_username
+
+  def shorten(input, length \\ 250) do
+    Text.sentence_truncate(input, length)
   end
 
   def update(_user, %TaxonomyTag{} = tag, attrs) do
