@@ -40,7 +40,7 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
 
                 Logger.warn("SQL file for taxonomy module not found in extensions's /priv directory: " <> path)
 
-                path = "../../priv/"<> filename |> Path.expand(@app_path)
+                path = "../../priv/seed_data/"<> filename |> Path.expand(@app_path)
 
                 case File.stat(path) do
                   {:ok, _} ->
@@ -56,15 +56,20 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
     end
   end
 
+  def dotsql_read(filename) do
+    String.split(File.read!(filename), ";\n")
+  end
+
   def dotsql_execute(filename, mode) do
-    sqlines = String.split(File.read!(filename), ";\n")
-    Enum.each(sqlines, &sql_execute(&1, mode))
-    flush()
+    dotsql_read(filename)
+    |> Enum.each(&sql_execute(&1, mode))
+
+    Ecto.Migration.flush()
   end
 
   def sql_execute(sql, :migration) do
     execute(sql)
-    flush()
+    Ecto.Migration.flush()
   end
 
   def sql_execute(sql, :seed) do
@@ -98,7 +103,7 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
   end
 
   def ingest_data(mode) do
-    try_dotsql_execute("seed_data/tags.data.sql", mode)
+    try_dotsql_execute("tags.data.sql", mode)
   end
 
   def down do
