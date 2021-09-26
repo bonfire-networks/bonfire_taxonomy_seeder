@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-only
+if Code.ensure_loaded?(Bonfire.GraphQL) do
 defmodule Bonfire.TaxonomySeeder.GraphQL.TaxonomyResolver do
   @moduledoc "GraphQL tag and Country queries"
 
@@ -167,4 +168,5 @@ defmodule Bonfire.TaxonomySeeder.GraphQL.TaxonomyResolver do
   #   {:ok, Simulate.long_node_list(&Simulate.tag/0)}
   #   |> GraphQL.response(info)
   # end
+end
 end
