@@ -1,4 +1,4 @@
-defmodule Bonfire.TaxonomySeeder.IndexingBatch do
+defmodule Bonfire.TaxonomySeeder.ImportBatch do
 
   import Bonfire.Common.Config, only: [repo: 0]
 

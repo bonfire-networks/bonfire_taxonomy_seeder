@@ -24,6 +24,8 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTag do
       foreign_key: :category_id
     )
 
+    many_to_many :related, TaxonomyTag, join_through: "taxonomy_tag_related", join_keys: [tag_id: :id, related_tag_id: :id]
+
     # field(:pointer_id, Pointers.ULID) # optional pointer ID for the tag (only needed once a tage is actually used)
     # belongs_to(:pointer, Pointer, references: :pointer_id, type: Pointers.ULID) # optional pointer ID for the tag (only needed once a tage is actually used)
     # has_one(:character, CommonsPub.Characters.Character, references: :pointer_id, foreign_key: :characteristic_id)
