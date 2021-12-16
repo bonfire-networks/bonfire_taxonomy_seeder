@@ -1,8 +1,8 @@
-# Bonfire:TaxonomySeeder
+# Bonfire.TaxonomySeeder
 
 An extension for [Bonfire](https://bonfire.cafe/) that handles:
 
-- Importing taxonomy entries into the database for Bonfire:Classify
+- Importing taxonomy entries into the database for Bonfire.Classify
 
 ## Handy commands
 
