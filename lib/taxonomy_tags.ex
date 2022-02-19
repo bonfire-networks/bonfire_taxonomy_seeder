@@ -1,7 +1,7 @@
 defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
   # import Ecto.Query
   # alias Ecto.Changeset
-  require Logger
+  import Where
 
   alias Bonfrie.GraphQL.Page
   alias Bonfire.Common.Text
@@ -103,13 +103,13 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
 
     # create_tag = cleanup(tag)
 
-    # IO.inspect(pointerise_parent: parent_tag)
+    # debug(pointerise_parent: parent_tag)
 
     repo().transact_with(fn ->
 
       # pointerise the parent(s) first (recursively)
       with {:ok, parent_category} <- maybe_make_category(user, parent_tag) do
-        # IO.inspect(parent_category: parent_category)
+        # debug(parent_category: parent_category)
 
         create_tag =
           cleanup(tag)
@@ -117,13 +117,13 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
           parent_category: parent_category,
           parent_category_id: parent_category.id})
 
-        Logger.warn("Finally pointerise the child(ren), in hierarchical order...")
+        warn("Finally pointerise the child(ren), in hierarchical order...")
 
         create_bonfire_classify_category(user, tag, create_tag)
 
       else
         _e ->
-          Logger.error("could not create parent tag")
+          error("could not create parent tag")
           raise "stopping here to debug"
 
           # create the child anyway?
@@ -137,10 +137,10 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
   end
 
   defp create_bonfire_classify_category(user, tag, attrs) do
-    # IO.inspect(create_bonfire_classify_category: tag)
+    # debug(create_bonfire_classify_category: tag)
 
     repo().transact_with(fn ->
-      # IO.inspect(create_bonfire_classify_category: tag)
+      # debug(create_bonfire_classify_category: tag)
 
       with {:ok, category} <- Bonfire.Classify.Categories.create(user, attrs),
            {:ok, _tag} <- update(user, tag, %{category: category, category_id: category.id}) do

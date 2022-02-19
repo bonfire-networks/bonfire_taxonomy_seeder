@@ -1,7 +1,7 @@
 defmodule Bonfire.TaxonomySeeder.Migrations do
   use Ecto.Migration
 
-  require Logger
+  import Where
 
   # alias Pointers.ULID
   alias CommonsPub.Repo
@@ -17,7 +17,7 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
         dotsql_execute(path, mode)
 
       {:error, :enoent} ->
-        Logger.info("SQL file for taxonomy module not found in current dir: " <> path)
+        debug("SQL file for taxonomy module not found in current dir: " <> path)
 
         path = "overlay/" <> filename |> Path.expand(__DIR__)
 
@@ -26,30 +26,30 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
             dotsql_execute(path, mode)
 
           {:error, :enoent} ->
-            Logger.info("SQL file for taxonomy module not found in extension's /lib/overlay: " <> path)
+            debug("SQL file for taxonomy module not found in extension's /lib/overlay: " <> path)
 
             path = "priv/"<> filename |> Path.expand(@app_path)
 
             case File.stat(path) do
               {:ok, _} ->
-                Logger.info("SQL file for taxonomy module found in extensions's /priv directory: " <> path)
+                debug("SQL file for taxonomy module found in extensions's /priv directory: " <> path)
 
                 dotsql_execute(path, mode)
 
               {:error, :enoent} ->
 
-                Logger.warn("SQL file for taxonomy module not found in extensions's /priv directory: " <> path)
+                warn("SQL file for taxonomy module not found in extensions's /priv directory: " <> path)
 
                 path = "../../priv/seed_data/"<> filename |> Path.expand(@app_path)
 
                 case File.stat(path) do
                   {:ok, _} ->
 
-                    Logger.info("SQL file for taxonomy module found in app's /priv directory: " <> path)
+                    debug("SQL file for taxonomy module found in app's /priv directory: " <> path)
 
                     dotsql_execute(path, mode)
 
-                  {:error, :enoent} -> Logger.error("SQL file for taxonomy module not found in app's /priv directory: " <> path)
+                  {:error, :enoent} -> error("SQL file for taxonomy module not found in app's /priv directory: " <> path)
                 end
               end
         end
