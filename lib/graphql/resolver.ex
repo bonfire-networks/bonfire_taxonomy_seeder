@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
-if Code.ensure_loaded?(Bonfire.GraphQL) do
+if Code.ensure_loaded?(Bonfire.API.GraphQL) do
 # IO.puts "Including GraphQL API..."
 defmodule Bonfire.TaxonomySeeder.GraphQL.TaxonomyResolver do
   @moduledoc "GraphQL tag and Country queries"
 
   import Bonfire.Common.Config, only: [repo: 0]
 
-  alias Bonfire.GraphQL
-  alias Bonfire.GraphQL.{
+  alias Bonfire.API.GraphQL
+  alias Bonfire.API.GraphQL.{
 
     FetchFields,
     FetchPage,
