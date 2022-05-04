@@ -22,7 +22,7 @@ defmodule Bonfire.TaxonomySeeder.DataCase do
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import Bonfire.TaxonomySeeder.DataCase
+      import Bonfire.TaxonomySeeder.DataCase, async: true
     end
   end
 

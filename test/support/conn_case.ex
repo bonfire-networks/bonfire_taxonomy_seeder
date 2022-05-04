@@ -23,7 +23,7 @@ defmodule Bonfire.TaxonomySeeder.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import Phoenix.LiveViewTest
-      import Bonfire.TaxonomySeeder.ConnCase
+      # import Bonfire.TaxonomySeeder.ConnCase, async: true
       import Bonfire.TaxonomySeeder.Test.ConnHelpers
       import Bonfire.TaxonomySeeder.Test.FakeHelpers
       alias Bonfire.TaxonomySeeder.Fake
