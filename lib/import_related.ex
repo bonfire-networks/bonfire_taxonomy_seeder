@@ -5,7 +5,7 @@ defmodule Bonfire.TaxonomySeeder.ImportRelated do
     {:ok, tags} = Bonfire.TaxonomySeeder.TaxonomyTags.many(preload: :category)
 
     with_related = tags
-    |> Bonfire.Repo.preload([:related])
+    |> Bonfire.Common.Repo.preload([:related])
     |> Enum.reject(&(&1.related==[]))
     # |> IO.inspect
 
@@ -14,8 +14,8 @@ defmodule Bonfire.TaxonomySeeder.ImportRelated do
 
       for %{category_id: rid} = tag_related when not is_nil(rid) <- tag.related do
 
-          Bonfire.Data.Assort.Ranked.changeset(%{item_id: rid, scope_id: tid}) |> Bonfire.Repo.upsert
-          Bonfire.Data.Assort.Ranked.changeset(%{item_id: tid, scope_id: rid}) |> Bonfire.Repo.upsert
+          Bonfire.Data.Assort.Ranked.changeset(%{item_id: rid, scope_id: tid}) |> Bonfire.Common.Repo.upsert
+          Bonfire.Data.Assort.Ranked.changeset(%{item_id: tid, scope_id: rid}) |> Bonfire.Common.Repo.upsert
 
       end
 
@@ -27,7 +27,7 @@ defmodule Bonfire.TaxonomySeeder.ImportRelated do
     {:ok, tags} = Bonfire.Tag.Tags.many()
 
     with_related = tags
-    |> Bonfire.Repo.preload([:profile, related: [:profile]])
+    |> Bonfire.Common.Repo.preload([:profile, related: [:profile]])
     |> Enum.reject(&(&1.related==[]))
     |> IO.inspect
 
