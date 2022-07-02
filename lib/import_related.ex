@@ -14,8 +14,8 @@ defmodule Bonfire.TaxonomySeeder.ImportRelated do
 
       for %{category_id: rid} = tag_related when not is_nil(rid) <- tag.related do
 
-          Bonfire.Data.Assort.Ranked.changeset(%{item_id: rid, scope_id: tid}) |> Bonfire.Common.Repo.upsert
-          Bonfire.Data.Assort.Ranked.changeset(%{item_id: tid, scope_id: rid}) |> Bonfire.Common.Repo.upsert
+          Bonfire.Data.Assort.Ranked.changeset(%{item_id: rid, scope_id: tid}) |> Bonfire.Common.Repo.insert_or_ignore
+          Bonfire.Data.Assort.Ranked.changeset(%{item_id: tid, scope_id: rid}) |> Bonfire.Common.Repo.insert_or_ignore
 
       end
 
