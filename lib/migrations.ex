@@ -6,7 +6,7 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
   # alias Pointers.ULID
   alias CommonsPub.Repo
 
-  @app_path File.cwd!
+  @app_path Bonfire.Common.Config.get(:root_path)
   @table "taxonomy_tag"
 
   def try_dotsql_execute(filename, mode) do
