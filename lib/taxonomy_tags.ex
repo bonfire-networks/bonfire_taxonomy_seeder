@@ -1,7 +1,7 @@
 defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
   # import Ecto.Query
   # alias Ecto.Changeset
-  import Where
+  import Untangle
 
   alias Bonfrie.GraphQL.Page
   alias Bonfire.Common.Text

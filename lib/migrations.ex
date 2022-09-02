@@ -1,7 +1,7 @@
 defmodule Bonfire.TaxonomySeeder.Migrations do
   use Ecto.Migration
 
-  import Where
+  import Untangle
 
   # alias Pointers.ULID
   alias CommonsPub.Repo
