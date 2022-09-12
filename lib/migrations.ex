@@ -19,39 +19,55 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
       {:error, :enoent} ->
         debug("SQL file for taxonomy module not found in current dir: " <> path)
 
-        path = "overlay/" <> filename |> Path.expand(__DIR__)
+        path = ("overlay/" <> filename) |> Path.expand(__DIR__)
 
         case File.stat(path) do
           {:ok, _} ->
             dotsql_execute(path, mode)
 
           {:error, :enoent} ->
-            debug("SQL file for taxonomy module not found in extension's /lib/overlay: " <> path)
+            debug(
+              "SQL file for taxonomy module not found in extension's /lib/overlay: " <>
+                path
+            )
 
-            path = "priv/"<> filename |> Path.expand(@app_path)
+            path = ("priv/" <> filename) |> Path.expand(@app_path)
 
             case File.stat(path) do
               {:ok, _} ->
-                debug("SQL file for taxonomy module found in extensions's /priv directory: " <> path)
+                debug(
+                  "SQL file for taxonomy module found in extensions's /priv directory: " <>
+                    path
+                )
 
                 dotsql_execute(path, mode)
 
               {:error, :enoent} ->
+                warn(
+                  "SQL file for taxonomy module not found in extensions's /priv directory: " <>
+                    path
+                )
 
-                warn("SQL file for taxonomy module not found in extensions's /priv directory: " <> path)
-
-                path = "../../priv/seed_data/"<> filename |> Path.expand(@app_path)
+                path =
+                  ("../../priv/seed_data/" <> filename)
+                  |> Path.expand(@app_path)
 
                 case File.stat(path) do
                   {:ok, _} ->
-
-                    debug("SQL file for taxonomy module found in app's /priv directory: " <> path)
+                    debug(
+                      "SQL file for taxonomy module found in app's /priv directory: " <>
+                        path
+                    )
 
                     dotsql_execute(path, mode)
 
-                  {:error, :enoent} -> error("SQL file for taxonomy module not found in app's /priv directory: " <> path)
+                  {:error, :enoent} ->
+                    error(
+                      "SQL file for taxonomy module not found in app's /priv directory: " <>
+                        path
+                    )
                 end
-              end
+            end
         end
     end
   end

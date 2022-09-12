@@ -1,5 +1,4 @@
 defmodule Bonfire.TaxonomySeeder.ImportBatch do
-
   import Bonfire.Common.Config, only: [repo: 0]
 
   @tags_index_name "taxonomy_tags"
@@ -24,7 +23,7 @@ defmodule Bonfire.TaxonomySeeder.ImportBatch do
     {:ok, tags} = repo.query("WITH RECURSIVE taxonomy_tags_tree AS
     (SELECT id, name, parent_tag_id, CAST(name As varchar(1000)) As name_crumbs, summary
     FROM taxonomy_tag
-    WHERE parent_tag_id "<>q_filter<>"
+    WHERE parent_tag_id " <> q_filter <> "
     UNION ALL
     SELECT si.id,si.name,
       si.parent_tag_id,
@@ -48,8 +47,8 @@ defmodule Bonfire.TaxonomySeeder.ImportBatch do
       ## add to search index as is
       # Bonfire.Search.Indexer.index_objects(obj, @tags_index_name, false)
 
-      IO.puts Bonfire.TaxonomySeeder.TaxonomyTags.shorten(name)
-      IO.puts Bonfire.TaxonomySeeder.TaxonomyTags.username(name)
+      IO.puts(Bonfire.TaxonomySeeder.TaxonomyTags.shorten(name))
+      IO.puts(Bonfire.TaxonomySeeder.TaxonomyTags.username(name))
 
       ## import into Categories
       Bonfire.TaxonomySeeder.TaxonomyTags.maybe_make_category(nil, id)
@@ -61,8 +60,16 @@ defmodule Bonfire.TaxonomySeeder.ImportBatch do
   end
 
   def delete_imported() do
-    Bonfire.Common.Repo.query("delete from category where id in (select id from bonfire_tag where facet='Topic')")
-    Bonfire.Common.Repo.query("delete from pointers_pointer where id in (select category.id from taxonomy_tag inner join category on category.id=taxonomy_tag.category_id)")
-    Bonfire.Common.Repo.query("delete from bonfire_data_identity_character where id in (select category.id from taxonomy_tag inner join category on category.id=taxonomy_tag.category_id)")
+    Bonfire.Common.Repo.query(
+      "delete from category where id in (select id from bonfire_tag where facet='Topic')"
+    )
+
+    Bonfire.Common.Repo.query(
+      "delete from pointers_pointer where id in (select category.id from taxonomy_tag inner join category on category.id=taxonomy_tag.category_id)"
+    )
+
+    Bonfire.Common.Repo.query(
+      "delete from bonfire_data_identity_character where id in (select category.id from taxonomy_tag inner join category on category.id=taxonomy_tag.category_id)"
+    )
   end
 end

@@ -21,7 +21,8 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
 
   def get(id), do: one(id: id, preload: :parent_tag, preload: :category)
 
-  def many(filters \\ []), do: {:ok, repo().many(Queries.query(TaxonomyTag, filters))}
+  def many(filters \\ []),
+    do: {:ok, repo().many(Queries.query(TaxonomyTag, filters))}
 
   @doc """
   Retrieves an Page of tags according to various filters
@@ -29,14 +30,27 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
   Used by:
   * GraphQL resolver single-parent resolution
   """
-  def page(cursor_fn, page_opts, base_filters \\ [], data_filters \\ [], count_filters \\ [])
+  def page(
+        cursor_fn,
+        page_opts,
+        base_filters \\ [],
+        data_filters \\ [],
+        count_filters \\ []
+      )
 
-  def page(cursor_fn, %{} = page_opts, base_filters, data_filters, count_filters) do
+  def page(
+        cursor_fn,
+        %{} = page_opts,
+        base_filters,
+        data_filters,
+        count_filters
+      ) do
     base_q = Queries.query(TaxonomyTag, base_filters)
     data_q = Queries.filter(base_q, data_filters)
     count_q = Queries.filter(base_q, count_filters)
 
-    with {:ok, [data, counts]} <- repo().transact_many(all: data_q, count: count_q) do
+    with {:ok, [data, counts]} <-
+           repo().transact_many(all: data_q, count: count_q) do
       {:ok, Page.new(data, counts, cursor_fn, page_opts)}
     end
   end
@@ -56,7 +70,14 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
         count_filters \\ []
       )
 
-  def pages(cursor_fn, group_fn, page_opts, base_filters, data_filters, count_filters) do
+  def pages(
+        cursor_fn,
+        group_fn,
+        page_opts,
+        base_filters,
+        data_filters,
+        count_filters
+      ) do
     Bonfire.API.GraphQL.Pagination.pages(
       Queries,
       TaxonomyTag,
@@ -76,9 +97,9 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
     # with Bonfire.Classify.Categories.one(taxonomy_tag_id: tag.id) do
     if !is_nil(tag.category_id) and
          Ecto.assoc_loaded?(tag.category) and
-         !is_nil(tag.category)
-         and !is_nil(tag.category.id) do
-      IO.puts(tag.name <>" already exists: "<>tag.category.id)
+         !is_nil(tag.category) and
+         !is_nil(tag.category.id) do
+      IO.puts(tag.name <> " already exists: " <> tag.category.id)
       # Bonfire.Classify.Categories.maybe_index(tag.category)
       {:ok, tag.category}
     else
@@ -106,7 +127,6 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
     # debug(pointerise_parent: parent_tag)
 
     repo().transact_with(fn ->
-
       # pointerise the parent(s) first (recursively)
       with {:ok, parent_category} <- maybe_make_category(user, parent_tag) do
         # debug(parent_category: parent_category)
@@ -114,13 +134,13 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
         create_tag =
           cleanup(tag)
           |> Map.merge(%{
-          parent_category: parent_category,
-          parent_category_id: parent_category.id})
+            parent_category: parent_category,
+            parent_category_id: parent_category.id
+          })
 
         warn("Finally pointerise the child(ren), in hierarchical order...")
 
         create_bonfire_classify_category(user, tag, create_tag)
-
       else
         _e ->
           error("could not create parent tag")
@@ -143,7 +163,8 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
       # debug(create_bonfire_classify_category: tag)
 
       with {:ok, category} <- Bonfire.Classify.Categories.create(user, attrs),
-           {:ok, _tag} <- update(user, tag, %{category: category, category_id: category.id}) do
+           {:ok, _tag} <-
+             update(user, tag, %{category: category, category_id: category.id}) do
         {:ok, category}
       end
     end)
@@ -151,7 +172,13 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
 
   @doc "Transform the generic fields of anything to be turned into a character."
   def cleanup(thing) do
-    name = thing.name |> String.trim("-") |> String.trim("_") |> String.trim(".") |> String.trim(":") |> String.trim()
+    name =
+      thing.name
+      |> String.trim("-")
+      |> String.trim("_")
+      |> String.trim(".")
+      |> String.trim(":")
+      |> String.trim()
 
     thing
     # convert to map
@@ -168,10 +195,12 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
     |> Map.delete(:id)
   end
 
-  def username("The "<>name), do: username(Text.upcase_first(name))
-  def username("the "<>name), do: username(Text.upcase_first(name))
-  def username("A "<>name), do: username(Text.upcase_first(name))
-  def username(name), do: shorten(name, 60) |> Bonfire.Me.Characters.clean_username
+  def username("The " <> name), do: username(Text.upcase_first(name))
+  def username("the " <> name), do: username(Text.upcase_first(name))
+  def username("A " <> name), do: username(Text.upcase_first(name))
+
+  def username(name),
+    do: shorten(name, 60) |> Bonfire.Me.Characters.clean_username()
 
   def shorten(input, length \\ 250) do
     Text.sentence_truncate(input, length)
@@ -195,5 +224,4 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
       end
     end)
   end
-
 end

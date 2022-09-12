@@ -10,6 +10,4 @@ defmodule Bonfire.TaxonomySeeder.Test.Faking do
   # import CommonsPub.Utils.Trendy
 
   # import Grumble
-
-
 end
