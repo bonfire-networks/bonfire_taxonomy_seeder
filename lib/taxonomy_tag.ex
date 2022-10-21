@@ -51,9 +51,9 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTag do
     # |> change_disabled()
   end
 
+  @behaviour Bonfire.Common.SchemaModule
   def context_module, do: Bonfire.TaxonomySeeder.TaxonomyTags
-
-  def queries_module, do: Bonfire.TaxonomySeeder.TaxonomyTag.Queries
+  def query_module, do: Bonfire.TaxonomySeeder.TaxonomyTag.Queries
 
   def follow_filters, do: [:default]
 end
