@@ -60,15 +60,15 @@ defmodule Bonfire.TaxonomySeeder.ImportBatch do
   end
 
   def delete_imported() do
-    Bonfire.Common.Repo.query(
+    repo().query(
       "delete from category where id in (select id from bonfire_tag where facet='Topic')"
     )
 
-    Bonfire.Common.Repo.query(
+    repo().query(
       "delete from pointers_pointer where id in (select category.id from taxonomy_tag inner join category on category.id=taxonomy_tag.category_id)"
     )
 
-    Bonfire.Common.Repo.query(
+    repo().query(
       "delete from bonfire_data_identity_character where id in (select category.id from taxonomy_tag inner join category on category.id=taxonomy_tag.category_id)"
     )
   end
