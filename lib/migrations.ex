@@ -1,4 +1,5 @@
 defmodule Bonfire.TaxonomySeeder.Migrations do
+  @moduledoc false
   use Ecto.Migration
 
   import Untangle
