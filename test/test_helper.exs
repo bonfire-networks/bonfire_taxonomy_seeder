@@ -1,6 +1,6 @@
 ExUnit.start()
 
 Ecto.Adapters.SQL.Sandbox.mode(
-  Bonfire.Common.Config.get!(:repo_module),
+  Bonfire.Common.Config.repo(),
   :manual
 )
