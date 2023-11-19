@@ -95,10 +95,10 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
     tag = repo().preload(tag, [:category, :parent_tag])
 
     # with Bonfire.Classify.Categories.one(taxonomy_tag_id: tag.id) do
-    if !is_nil(tag.category_id) and
+    if not is_nil(tag.category_id) and
          Ecto.assoc_loaded?(tag.category) and
-         !is_nil(tag.category) and
-         !is_nil(tag.category.id) do
+         not is_nil(tag.category) and
+         not is_nil(tag.category.id) do
       IO.puts(tag.name <> " already exists: " <> tag.category.id)
       # Bonfire.Classify.Categories.maybe_index(tag.category)
       {:ok, tag.category}
