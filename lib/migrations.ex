@@ -4,7 +4,7 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
 
   import Untangle
 
-  # alias Pointers.ULID
+  # alias Needle.ULID
   alias CommonsPub.Repo
 
   @app_path Bonfire.Common.Config.get(:root_path)
@@ -102,7 +102,7 @@ defmodule Bonfire.TaxonomySeeder.Migrations do
       remove_if_exists(:pointer_id, :uuid)
     end
 
-    Pointers.Migration.drop_pointer_trigger(@table)
+    Needle.Migration.drop_pointer_trigger(@table)
     CommonsPub.ReleaseTasks.remove_meta_table(@table)
   end
 

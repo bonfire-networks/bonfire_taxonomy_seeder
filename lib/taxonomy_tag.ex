@@ -20,7 +20,7 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTag do
 
     belongs_to(:category, Bonfire.Classify.Category,
       references: :id,
-      type: Pointers.ULID,
+      type: Needle.ULID,
       foreign_key: :category_id
     )
 
@@ -29,8 +29,8 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTag do
       join_keys: [tag_id: :id, related_tag_id: :id]
     )
 
-    # field(:pointer_id, Pointers.ULID) # optional pointer ID for the tag (only needed once a tage is actually used)
-    # belongs_to(:pointer, Pointer, references: :pointer_id, type: Pointers.ULID) # optional pointer ID for the tag (only needed once a tage is actually used)
+    # field(:pointer_id, Needle.ULID) # optional pointer ID for the tag (only needed once a tage is actually used)
+    # belongs_to(:pointer, Pointer, references: :pointer_id, type: Needle.ULID) # optional pointer ID for the tag (only needed once a tage is actually used)
     # has_one(:character, CommonsPub.Characters.Character, references: :pointer_id, foreign_key: :characteristic_id)
   end
 
