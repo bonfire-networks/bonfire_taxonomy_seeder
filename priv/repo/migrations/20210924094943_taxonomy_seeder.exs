@@ -1,4 +1,4 @@
-defmodule Bonfire.Repo.Migrations.TaxonomySeeder  do
+defmodule Bonfire.Repo.Migrations.TaxonomySeeder do
   @moduledoc false
   use Ecto.Migration
 
@@ -11,5 +11,4 @@ defmodule Bonfire.Repo.Migrations.TaxonomySeeder  do
     Bonfire.TaxonomySeeder.Migrations.down()
   end
 
-  # def change, do: nil
 end

@@ -1,4 +1,6 @@
 defmodule Bonfire.TaxonomySeeder.ImportRelated do
+  import Bonfire.Common.Config, only: [repo: 0]
+
   def batch() do
     {:ok, tags} = Bonfire.TaxonomySeeder.TaxonomyTags.many(preload: :category)
 
