@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-only
-if Code.ensure_loaded?(Bonfire.API.GraphQL) do
+if Application.compile_env(:bonfire_api_graphql, :modularity) != :disabled do
   defmodule Bonfire.TaxonomySeeder.GraphQL.TaxonomySchema do
     use Absinthe.Schema.Notation
     # alias Bonfire.Web.GraphQL.{CommonResolver}
