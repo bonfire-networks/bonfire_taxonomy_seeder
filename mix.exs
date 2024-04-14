@@ -17,7 +17,7 @@ defmodule Bonfire.TaxonomySeeder.MixProject do
           {:floki, ">= 0.0.0", only: [:dev, :test]},
           {:bonfire_api_graphql,
            git: "https://github.com/bonfire-networks/bonfire_api_graphql",
-           branch: "main",
+           
            optional: true, runtime: false}
         ])
     ]
