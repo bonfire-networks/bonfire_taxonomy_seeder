@@ -23,7 +23,7 @@ defmodule Bonfire.TaxonomySeeder.ImportRelated do
   end
 
   def check_imported() do
-    {:ok, tags} = Bonfire.Tag.Tags.many()
+    {:ok, tags} = Bonfire.Tag.many()
 
     with_related =
       tags
