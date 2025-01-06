@@ -5,7 +5,7 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTag do
   alias Ecto.Changeset
   alias Bonfire.TaxonomySeeder.TaxonomyTag
 
-  @type t :: %__MODULE__{}
+  # @type t :: %__MODULE__{}
   @required ~w(name)a
   @cast @required ++ ~w(summary parent_tag_id category_id)a
 
