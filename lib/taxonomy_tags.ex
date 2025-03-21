@@ -100,7 +100,7 @@ defmodule Bonfire.TaxonomySeeder.TaxonomyTags do
          not is_nil(tag.category) and
          not is_nil(tag.category.id) do
       IO.puts(tag.name <> " already exists: " <> tag.category.id)
-      # Bonfire.Classify.Categories.maybe_index(tag.category)
+
       {:ok, tag.category}
     else
       make_category(user, tag)
