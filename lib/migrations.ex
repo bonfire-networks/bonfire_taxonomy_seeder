@@ -1,6 +1,7 @@
 defmodule Bonfire.TaxonomySeeder.Migrations do
   @moduledoc false
   use Ecto.Migration
+  use Bonfire.Common.Config
 
   import Untangle
 
