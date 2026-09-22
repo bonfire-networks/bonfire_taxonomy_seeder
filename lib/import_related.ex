@@ -29,6 +29,5 @@ defmodule Bonfire.TaxonomySeeder.ImportRelated do
       tags
       |> repo().preload([:profile, related: [:profile]])
       |> Enum.reject(&(&1.related == []))
-      |> IO.inspect()
   end
 end
